@@ -56,17 +56,19 @@ function validateDate(date){
   
   return /[0-9]{4}[-|\/]{1}[0-9]{2}[-|\/]{1}[0-9]{2}/.test(date);
 };
+
 // L'objet errors sera appelé pour la validation du formulaire
 let errors = {
-  first: null,
-  last: null, 
-  birthdate: null,
-  email: null,
-  tournoi: null,
-  location: true,
-  conditions: null,
-  newevents: null,
+  first: false,
+  last: false, 
+  birthdate: false,
+  email: false,
+  tournoi: false,
+  location: false,
+  conditions: false,
+  newevents: false,
 };
+
 // AU CHANGEMENT DE FOCUS, VA TESTER LA VALIDITE DES VALUE RENTRE
 first.addEventListener("change", testFirst);
 last.addEventListener("change", testLast);
@@ -128,8 +130,6 @@ function testLast() {
   }
 }
 
-
-
 // TEST POUR EMAIL
 function testEmail() {
     if (validateEmail(email.value)) {
@@ -156,7 +156,6 @@ function testBirthdate() {
   }
 }
 
-
 // VALIDE LE NOMBRE DE TOURNOI DEJA PARTICIPE
 function testTournoi(){
     if (!quantity.value || quantity.value > 99 || quantity.value < 0){
@@ -169,7 +168,6 @@ function testTournoi(){
       quantity.closest('.formData').removeAttribute('data-error-visible');
     }
 }
-
 
 // checkbox obligatoire enlevé si coché
 function testCheckboxObligatoire(){
@@ -199,7 +197,7 @@ newsEvent.addEventListener("change", function(){
 // Fonction qui regarde si un button type radio est coché
 // Si coché alors locationValue prend la valeur du champ coché
 // Si rien n'est coché alors locationValue est undefined, renvoie false
-//Si coché renvoi true, alors error.location prend la valeur inverse
+// Si coché renvoi true, alors error.location prend la valeur inverse
 // errors.location = fausse si quelque chose est coché, renvoi true si rien n'est coché.
 // errors.location = false pour valider formulaire
 const formLocation = document.getElementById('formLocation');
@@ -217,3 +215,34 @@ let radioLocation = document.querySelectorAll('input[name="location"]');
     }
   }
   
+// Dès submit du formulaire => on va appeler toutes les fonctions qui vont infirmer ou confirmer la value des input qui ont été rentré
+// Chaque fonction qui teste les inputs , va modifier l'objet errors. 
+// Si l'objet errors a une de ses clés qui a la valeur false alors le submit est empéché , si tous les input sont bons, alors un message est écrit pour confirmer la validation du formulaire
+
+form.addEventListener('submit', function(e){
+  testCheckBoxLocation();
+  testFirst();
+  testLast();
+  testEmail();
+  testBirthdate();
+  testTournoi();
+  testCheckboxObligatoire();
+  if (errors.first || errors.last || errors.birthdate || errors.email || errors.tournoi || errors.location || errors.conditions){
+    e.preventDefault();
+  }else {
+    modalBody.innerHTML = `<div class="submitEnd"> Merci pour votre inscription</div>
+    
+    <div
+    id="closeButton"
+    class="btn-close">
+    Fermer
+    </div>
+    
+    `
+    const closeButton = document.getElementById('closeButton');
+    closeButton.addEventListener('click', function(){
+      modalbg.style.display = "none";
+      });
+  }
+
+});
