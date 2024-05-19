@@ -8,7 +8,7 @@ function editNav() {
   }
 }
 
-// DOM Elements
+// Récupération des éléments du DOM
 const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
 const modalBtnNone = document.querySelector('.close');
@@ -22,42 +22,46 @@ const checkboxObligatoire = document.getElementById('checkbox1');
 const modalBody =document.querySelector('.modal-body');
 
 
-// launch modal event
+// Événement de lancement de la modale
 modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 
-// launch modal form
+// Fonction de lancement de la modale
 function launchModal() {
   modalbg.style.display = "block";
 }
-// Je display none le formulaire lorsque je clique sur la croix
+// Fermeture de la modale lors du clic sur la croix 
 modalBtnNone.addEventListener('click', function(){
 modalbg.style.display = "none";
 });
-// fermer la modale quand appui sur ESC
+// Fermeture de la modale lors de l'appui sur la touche ESC
 window.addEventListener('keydown', function(e){
   if(e.key === "Escape" || e.key =="esc"){
     modalbg.style.display = "none";
   }
 });
 
-// test avec une regex de email. Si email correspond a regex renvoi true, sinon false
+// Fonction de validation d'une adresse email avec une expression régulière
+// Si email correspond a regex renvoi true, sinon false
 function validateEmail(email) {
   
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
-// test d'un prénom ou nom de famille
+
+// Fonction de validation d'un prénom ou d'un nom de famille
 function validateFirstLast(value) {
-  // j'enlève les espaces avec la fonction trim
+// Suppression des espaces inutiles avec la fonction trim
   value = value.trim();
+// Vérification avec une expression régulière
   return /^[a-z ,.'-]+$/i.test(value)
 }
-// test d'une date 
+
+// Fonction de validation d'une date
 function validateDate(date){
   
   return /[0-9]{4}[-|\/]{1}[0-9]{2}[-|\/]{1}[0-9]{2}/.test(date);
 };
 
-// L'objet errors sera appelé pour la validation du formulaire
+// Objet pour stocker les erreurs de validation
 let errors = {
   first: false,
   last: false, 
@@ -69,14 +73,15 @@ let errors = {
   newevents: false,
 };
 
-// AU CHANGEMENT DE FOCUS, VA TESTER LA VALIDITE DES VALUE RENTRE
+// Écouteurs d'événements pour tester la validité des valeurs saisies
 first.addEventListener("change", testFirst);
 last.addEventListener("change", testLast);
 email.addEventListener("change", testEmail); 
 birthdate.addEventListener("change", testBirthdate);
 quantity.addEventListener("change", testTournoi);
 checkboxObligatoire.addEventListener("change", testCheckboxObligatoire);
-// LES EVENT INPUT QUAND VALUE VIDE, enlève l'erreur
+
+// Événements pour supprimer les erreurs lorsque les champs sont vides
 first.addEventListener ("input", function(){
   if (first.value == ""){
     errors.first= true;
@@ -98,10 +103,10 @@ email.addEventListener ("input", function(){
   }
 });
 
-// TEST DU PRENOM
+// Fonction de test du prénom
 function testFirst() {
-  const firstName = first.value.trim(); // Trim pour enlever les espaces inutiles
-  if (firstName.length >= 2) { // Vérifie si la longueur est supérieure ou égale à 2
+  const firstName = first.value.trim(); // Suppression des espaces inutiles avec methode trim
+  if (firstName.length >= 2) { // Vérification de la longueur si supérieure ou égale à 2
     // Le prénom est valide
     errors.first = false;
     first.closest('.formData').removeAttribute('data-error-visible');
@@ -114,10 +119,10 @@ function testFirst() {
   }
 }
 
-// TEST DU NOM DE FAMILLE
+// Fonction de test du nom de famille
 function testLast() {
-  const lastName = last.value.trim(); // Trim pour enlever les espaces inutiles
-  if (lastName.length >= 2) { // Vérifie si la longueur est supérieure ou égale à 2
+  const lastName = last.value.trim(); // Suppression des espaces inutiles avec methode trim
+  if (lastName.length >= 2) { // Vérification de la longueur si supérieure ou égale à 2
     // Le nom de famille est valide
     errors.last = false;
     last.closest('.formData').removeAttribute('data-error-visible');
@@ -130,7 +135,7 @@ function testLast() {
   }
 }
 
-// TEST POUR EMAIL
+// Fonction de test de l'adresse email
 function testEmail() {
     if (validateEmail(email.value)) {
       email.closest('.formData').removeAttribute('data-error-visible');
@@ -143,7 +148,7 @@ function testEmail() {
     }
 }
 
-//TEST DATE 
+// Fonction de test de la date de naissance
 function testBirthdate() {
   if (validateDate(birthdate.value)) {
     birthdate.closest('.formData').removeAttribute('data-error-visible');
@@ -156,7 +161,7 @@ function testBirthdate() {
   }
 }
 
-// VALIDE LE NOMBRE DE TOURNOI DEJA PARTICIPE
+// Fonction de validation du nombre de tournois déja participé
 function testTournoi(){
     if (!quantity.value || quantity.value > 99 || quantity.value < 0){
       quantity.closest('.formData').setAttribute('data-error', `Veuillez entrer un chiffre entre 0 et 99`);
@@ -169,7 +174,7 @@ function testTournoi(){
     }
 }
 
-// checkbox obligatoire enlevé si coché
+// Fonction de validation de la checkbox obligatoire
 function testCheckboxObligatoire(){
     if(checkboxObligatoire.checked){
       errors.conditions = false;
@@ -182,8 +187,9 @@ function testCheckboxObligatoire(){
     }
 }
 
-// Test si l'utilisateur souhaite être prévenu des prochains événements. 
-// Si oui, alors errors.newevents passe à true, sinon false;
+// Écouteur d'événement pour vérifier si l'utilisateur souhaite être prévenu des prochains événements 
+// On teste si l'utilisateur souhaite être prévenu. 
+// Si oui, alors errors.newevents passe à true, si non false;
 const newsEvent = document.getElementById('checkbox2');
 newsEvent.addEventListener("change", function(){
   if(newsEvent.checked){
@@ -194,12 +200,13 @@ newsEvent.addEventListener("change", function(){
   }
 });
 
-// Fonction qui regarde si un button type radio est coché
-// Si coché alors locationValue prend la valeur du champ coché
-// Si rien n'est coché alors locationValue est undefined, renvoie false
-// Si coché renvoi true, alors error.location prend la valeur inverse
-// errors.location = fausse si quelque chose est coché, renvoi true si rien n'est coché.
-// errors.location = false pour valider formulaire
+// Fonction pour vérifier si une ville est sélectionnée
+// On vérifie si un bouton de type radio est sélectionné.
+// Si un bouton est sélectionné, alors locationValue prend la valeur de l'option sélectionnée.
+// Si aucun bouton n'est sélectionné, alors locationValue est undefined, renvoi false.
+// Si un bouton est sélectionné, la valeur de errors.location est inversée.
+// errors.location = false si une option est sélectionnée, et true si aucune option n'est sélectionnée.
+// errors.location = false pour valider le formulaire.
 const formLocation = document.getElementById('formLocation');
 let radioLocation = document.querySelectorAll('input[name="location"]');
   function testCheckBoxLocation(){
@@ -215,7 +222,8 @@ let radioLocation = document.querySelectorAll('input[name="location"]');
     }
   }
   
-// Dès submit du formulaire => on va appeler toutes les fonctions qui vont infirmer ou confirmer la value des input qui ont été rentré
+// Écouteur d'événement pour la soumission du formulaire
+// Dès submit du formulaire on appele toutes les fonctions qui vont infirmer ou confirmer la value des input qui ont été rentré
 // Chaque fonction qui teste les inputs , va modifier l'objet errors. 
 // Si l'objet errors a une de ses clés qui a la valeur false alors le submit est empéché , si tous les input sont bons, alors un message est écrit pour confirmer la validation du formulaire
 
@@ -228,8 +236,9 @@ form.addEventListener('submit', function(e){
   testTournoi();
   testCheckboxObligatoire();
   if (errors.first || errors.last || errors.birthdate || errors.email || errors.tournoi || errors.location || errors.conditions){
-    e.preventDefault();
+    e.preventDefault(); // Empêche la soumission du formulaire si des erreurs sont présentes
   }else {
+    // Affichage d'un message de confirmation de l'inscription
     modalBody.innerHTML = `<div class="submitEnd"> Merci pour votre inscription</div>
     
     <div
